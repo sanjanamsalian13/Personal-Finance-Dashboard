@@ -31,6 +31,9 @@ uploaded_file = st.file_uploader(
     type="csv"
 )
 
+st.info(
+    "📄 Upload a CSV with the columns: Date, Description, Amount, Category, Type."
+)
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 else:
