@@ -1,0 +1,10 @@
+Date,Description,Amount,Category,Type
+2026-01-01,Salary,60000,Income,Income
+2026-01-02,House Rent,-18000,Rent,Expense
+2026-01-03,Supermarket,-2800,Food,Expense
+2026-01-04,Electricity Bill,-1700,Bills,Expense
+2026-01-05,Netflix,-649,Entertainment,Expense
+2026-01-06,Petrol,-2200,Transport,Expense
+2026-01-08,Coffee Shop,-350,Food,Expense
+2026-01-10,Freelance Project,12000,Income,Income
+2026-01-12,Shopping Mall,-5500,Shopping,Expense
