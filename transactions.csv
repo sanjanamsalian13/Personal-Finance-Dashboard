@@ -1,10 +1,31 @@
 Date,Description,Amount,Category,Type
-2026-01-01,Salary,60000,Income,Income
-2026-01-02,House Rent,-18000,Rent,Expense
-2026-01-03,Supermarket,-2800,Food,Expense
-2026-01-04,Electricity Bill,-1700,Bills,Expense
-2026-01-05,Netflix,-649,Entertainment,Expense
-2026-01-06,Petrol,-2200,Transport,Expense
-2026-01-08,Coffee Shop,-350,Food,Expense
-2026-01-10,Freelance Project,12000,Income,Income
-2026-01-12,Shopping Mall,-5500,Shopping,Expense
+2026-01-01,Salary,65000,Income,Income
+2026-01-02,Rent,-18000,Rent,Expense
+2026-01-03,Groceries,-3500,Food,Expense
+2026-01-04,Netflix,-499,Entertainment,Expense
+2026-01-05,Electricity,-2100,Bills,Expense
+2026-01-06,Petrol,-1800,Transport,Expense
+2026-01-07,Shopping,-4200,Shopping,Expense
+2026-01-08,Freelance,12000,Income,Income
+2026-01-09,Coffee,abc,Food,Expense
+2026-01-10,Medicine,-850,Health,Expense
+2026-15-45,Movie,-650,Entertainment,Expense
+2026-01-12,Internet,-999,Bills,Expense
+2026-01-13,, -1750,Food,Expense
+2026-01-14,Bonus,15000,Income,income
+2026-01-15,Bus Pass,-600,,Expense
+2026-01-16,Books,-2200,Education,Expense
+2026-01-17,Amazon,-4999,Shopping, Expense
+2026-01-18,Water Bill,-900,Bills,Expense
+2026-01-19,Gym,-1800,Health,expense
+2026-01-20,Salary,65000,Income,Income
+2026-01-20,Salary,65000,Income,Income
+2026-01-22,Groceries,-3900,Food,Expense
+2026-01-23,Shopping,6200,Shopping,Expense
+2026-01-24,Restaurant,-2200,Food,Expense
+2026-01-25,Freelance,8000,Income,Income
+,Electricity,-1700,Bills,Expense
+2026-01-27,Petrol,-1500,Transport,Expense
+2026-01-28,Movie,-700,Entertainment,Expense
+2026-01-29,Internet,-999,Bills,Expense
+2026-01-30,Medicine,-1400,Health,Expense

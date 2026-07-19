@@ -17,8 +17,9 @@ st.set_page_config(
 # Title
 # --------------------------------------------------
 st.title("💰 Personal Finance Dashboard")
-st.write("Analyze your income and expenses easily!")
-
+st.write(
+    "Upload your transaction history to visualize spending patterns, track income, and monitor your savings."
+)
 # --------------------------------------------------
 # Upload CSV
 # --------------------------------------------------
@@ -38,12 +39,10 @@ else:
         st.stop()
     df = pd.read_csv(default_csv_path)
 
-# Convert numeric values safely
-try:
-    df["Amount"] = pd.to_numeric(df["Amount"], errors="coerce")
-except KeyError:
-    st.error("❌ CSV must contain an Amount column.")
-    st.stop()
+# Keep a copy so invalid rows can be shown back to the user.
+raw_df = df.copy()
+
+
 
 # --------------------------------------------------
 # Validate CSV
@@ -61,18 +60,97 @@ if not all(column in df.columns for column in required_columns):
     st.stop()
 
 # --------------------------------------------------
+# Clean Data
+# --------------------------------------------------
+
+# Convert Amount to numeric
+parsed_amount = pd.to_numeric(df["Amount"], errors="coerce")
+
+# Convert Date
+parsed_date = pd.to_datetime(
+    df["Date"],
+    errors="coerce",
+    format="%Y-%m-%d"
+)
+
+df["Amount"] = parsed_amount
+df["Date"] = parsed_date
+
+amount_invalid_mask = parsed_amount.isna()
+date_invalid_mask = parsed_date.isna()
+invalid_mask = amount_invalid_mask | date_invalid_mask
+
+invalid_rows_df = raw_df.loc[invalid_mask].copy()
+
+if not invalid_rows_df.empty:
+    reason_labels = []
+    for idx in invalid_rows_df.index:
+        reasons = []
+        if date_invalid_mask.loc[idx]:
+            reasons.append("Invalid date")
+        if amount_invalid_mask.loc[idx]:
+            reasons.append("Non-numeric amount")
+        reason_labels.append(" + ".join(reasons))
+    invalid_rows_df["Invalid Reason"] = reason_labels
+
+# Fill missing values
+df["Description"] = (
+    df["Description"]
+    .fillna("No Description")
+    .astype(str)
+    .str.strip()
+)
+
+df["Category"] = (
+    df["Category"]
+    .fillna("Uncategorized")
+    .astype(str)
+    .str.strip()
+)
+
+df["Type"] = (
+    df["Type"]
+    .astype(str)
+    .str.strip()
+    .str.title()
+)
+
+# Remove invalid rows
+original_rows = len(df)
+
+df = df.dropna(subset=["Amount", "Date"])
+df = df.reset_index(drop=True)
+
+
+removed_rows = original_rows - len(df)
+
+if removed_rows > 0:
+    st.warning(
+        f"⚠️ {removed_rows} invalid row(s) were removed because they contained invalid dates or non-numeric amounts."
+    )
+    with st.expander("Show removed rows"):
+        st.dataframe(
+            invalid_rows_df.reset_index(drop=True),
+            width="stretch"
+        )
+else:
+    st.success("✅ No invalid rows found. Data loaded successfully.")
+
+
+
+# --------------------------------------------------
 # Sidebar Filters
 # --------------------------------------------------
 st.sidebar.header("🔍 Filters")
 
 selected_type = st.sidebar.selectbox(
     "Transaction Type",
-    ["All"] + list(df["Type"].unique())
+    ["All"] + sorted(df["Type"].unique())
 )
 
 selected_category = st.sidebar.selectbox(
     "Category",
-    ["All"] + list(df["Category"].unique())
+    ["All"] + sorted(df["Category"].unique())
 )
 
 search = st.sidebar.text_input(
@@ -105,13 +183,21 @@ if search:
         )
     ]
 
+filtered_df = filtered_df.reset_index(drop=True)
+
+filtered_df = (
+    filtered_df
+    .sort_values(by="Date", ascending=False)
+    .reset_index(drop=True)
+)
+
 # --------------------------------------------------
 # Download Button
 # --------------------------------------------------
 st.download_button(
     label="📥 Download Filtered Data",
     data=filtered_df.to_csv(index=False),
-    file_name="transactions.csv",
+    file_name="filtered_transactions.csv",
     mime="text/csv"
 )
 
@@ -121,6 +207,8 @@ st.download_button(
 st.subheader("📋 Transaction Details")
 
 st.dataframe(filtered_df, width="stretch")
+st.caption(f"Showing {len(filtered_df)} transaction(s)")
+
 
 # --------------------------------------------------
 # Financial Summary
@@ -129,10 +217,12 @@ total_income = filtered_df[
     filtered_df["Type"] == "Income"
 ]["Amount"].sum()
 
-total_expense = abs(
+total_expense = (
     filtered_df[
         filtered_df["Type"] == "Expense"
-    ]["Amount"].sum()
+    ]["Amount"]
+    .abs()
+    .sum()
 )
 
 net_savings = total_income - total_expense
